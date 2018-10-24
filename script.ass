@@ -1,0 +1,213 @@
+import "generic/script";
+
+var r1 = -1, r2 = -1, r3 = -1, p1 = 50, p2 = 50, p3 = 50;
+
+game.setStartFunction(
+    function() {
+		objects.neighbor.setAim(objects["kit/sign_circle"], stage1);
+        p1 = 45;
+        p2 = 55;
+        p3 = 45;
+});
+
+function stage1(obj, aim, enable) {
+        var r = 0;
+        if (r2 == -1 ) r = system.random(100);
+        else r = r2;
+        if (r < p1) {
+            obj.setAim(objects["lir/sofa"], stage2);
+            if (p1 < 50) {
+                if (p1 > 10) p1 -= 20;
+            } else p1 = 45;
+        }
+        else {
+            obj.setAim(objects["lir/score"], stage2);
+            if (p1 < 50) {
+                p1 = 55;
+            } else if (p1 < 90) p1 += 20;
+        }
+        if (aim===objects["kit/microwave"]) {
+            obj.doActions(aim, "open", "cook", "open");
+            if (!enable) {
+                var trick = tricks["kit/microwave_breakage"];
+				aim = objects["kit/microwave_breakage"];
+				if (true) obj.addIcon(null);
+				obj.unCombine(trick.combination);
+				obj.doActions(aim, "repair");
+				obj.doTrick(trick, "shout0", "shout2_extra");
+				obj.addIcon("shout");
+				obj.doActions(aim, "breakage");
+                r1 = 3;
+            }
+        } else {
+            obj.doActions(aim, "stand");
+        }
+}
+
+function stage2(obj, aim, enable) {
+        var r = 0;
+        if (r3 == -1 ) r = system.random(100);
+        else r = r3;
+        if (r < p2) {
+            obj.setAim(objects["anc/flower"], stage3);
+            if (p2 < 50) {
+                if (p2 > 10) p2 -= 20;
+            } else p2 = 45;
+        } else {
+            obj.setAim(objects["anc/picture"], stage3);
+            if (p2 < 50) {
+                p2 = 55;
+            } else if (p2 < 90) p2 += 20;
+        }
+        if (aim===objects["lir/sofa"]) {
+			obj.doActions(aim, "sit","sit");
+            if (!enable) {
+                var trick = tricks["lir/sofa_trap"];
+				aim = objects["lir/sofa_trap"];
+				obj.unCombine(trick.combination);
+				if (true) obj.addIcon(null);
+				obj.doTrick(trick, "shout0", "shout2_extra");
+				obj.addIcon("shout");
+				obj.doActions(aim, "surprise");
+                r2 = 3;
+            }
+        } else {
+            obj.doActions(aim, "play","play","play_end");
+            if (!enable) {
+                var trick = tricks["lir/score_smeared"];
+				aim = objects["lir/score_smeared"];
+				if (true) obj.addIcon(null);
+				obj.unCombine(trick.combination);
+				obj.objActions(aim, "repair");
+				obj.doTrick(trick, "shout0", "shout2_extra");
+				obj.addIcon("shout");
+				obj.doActions(aim, "wild");
+                r2 = 97;
+            }
+        }
+}
+
+function stage3(obj, aim, enable) {
+        var r = 0;
+        if (r1 == -1 ) r = system.random(100);
+        else r = r1;
+        if (aim===objects["anc/flower"]) {
+            if (r < p3){
+                obj.setAim(objects["lir/kit"], function(obj, aim, enable) {
+                    obj.setAim(objects["kit/sign_circle"], stage1);
+                });
+                if (p3 < 50) {
+                    if (p3 > 10) p3 -= 20;
+                } else p3 = 45;
+            } else {
+                obj.setAim(objects["lir/kit"], function(obj, aim, enable) {
+                    obj.setAim(objects["kit/microwave"], stage1);
+                });
+                if (p3 < 50) {
+                    p3 = 55;
+                } else if (p3 < 90) p3 += 20;
+            }
+            obj.doActions(aim, "sniff");
+            if (!enable) {
+                var trick = tricks["anc/flower_stink"];
+				aim = objects["anc/flower_stink"];
+				obj.unCombine(trick.combination);
+				if (true) obj.addIcon(null);
+				obj.doTrick(trick, "shout0", "shout2_extra");
+				obj.addIcon("shout");
+				obj.doActions(aim, "sniff");
+                r3 = 3;
+            }
+        } else {
+            if (r < p3){
+                obj.setAim(objects["kit/sign_circle"], stage1);
+                if (p3 < 50) {
+                    if (p3 > 10) p3 -= 20;
+                } else p3 = 45;
+            } else {
+                obj.setAim(objects["kit/microwave"], stage1);
+                if (p3 < 50) {
+                    p3 = 55;
+                } else if (p3 < 90) p3 += 20;
+            }
+            obj.doActions(aim, "stand");
+        }
+}
+triggers += {
+	clean: function(actor, obj, left) {
+		var trick = tricks["anc/picture_smeared"];
+		if (true) actor.addIcon(null);
+		actor.unCombine(trick.combination);
+		actor.objActions(obj, "clean");
+		actor.goto(obj);
+		actor.doTrick(trick, "shout0", "shout2_extra");
+		actor.addIcon("shout");
+                r3 = 97;
+		if (left) actor.addActions("discover3", "scared3");
+		else actor.addActions("discover1", "scared1");
+	},
+	marbles_anc: function(actor, obj, left) {
+		var trick = tricks["anc/marbles"];
+		if (true) actor.addIcon(null);
+                else actor.addIcon(game.getIcon());
+		actor.unCombine(trick.combination);
+		actor.objActions(obj, "clean");
+		actor.doTrick(trick, "shout2", "shout2_extra");
+		actor.addAction(left ? "slip3" : "slip1");
+		actor.addIcon("shout");
+	},
+	marbles_kit: function(actor, obj, left) {
+		var trick = tricks["kit/marbles"];
+		if (true) actor.addIcon(null);
+        else actor.addIcon(game.getIcon());
+		actor.unCombine(trick.combination);
+		actor.objActions(obj, "clean");
+		actor.doTrick(trick, "shout2", "shout2_extra");
+		actor.addAction(left ? "slip3" : "slip1");
+		actor.addIcon("shout");
+	},
+	marbles_lir: function(actor, obj, left) {
+		var trick = tricks["lir/marbles"];
+		if (true) actor.addIcon(null);
+        else actor.addIcon(game.getIcon());
+		actor.unCombine(trick.combination);
+		actor.objActions(obj, "clean");
+		actor.doTrick(trick, "shout2", "shout2_extra");
+		actor.addAction(left ? "slip3" : "slip1");
+		actor.addIcon("shout");
+	},
+	groundbanana_kit: function(actor, obj, left) {
+		var trick = tricks["kit/groundbanana"];
+		if (true) actor.addIcon(null);
+        else actor.addIcon(game.getIcon());
+		actor.unCombine(trick.combination);
+		actor.objActions(obj, "clean");
+		actor.doTrick(trick, "shout2", "shout2_extra");
+		actor.addAction(left ? "slip3" : "slip1");
+		actor.addIcon("shout");
+                r1 = 3;
+            
+	},
+	groundbanana_lir: function(actor, obj, left) {
+		var trick = tricks["lir/groundbanana"];
+		if (true) actor.addIcon(null);
+        else actor.addIcon(game.getIcon());
+		actor.unCombine(trick.combination);
+		actor.objActions(obj, "clean");
+		actor.doTrick(trick, "shout2", "shout2_extra");
+		actor.addAction(left ? "slip3" : "slip1");
+		actor.addIcon("shout");
+                r1 = 3;
+	},
+	groundbanana_anc: function(actor, obj, left) {
+		var trick = tricks["anc/groundbanana"];
+		if (true) actor.addIcon(null);
+        else actor.addIcon(game.getIcon());
+		actor.unCombine(trick.combination);
+		actor.objActions(obj, "clean");
+		actor.doTrick(trick, "shout2", "shout2_extra");
+		actor.addAction(left ? "slip3" : "slip1");
+		actor.addIcon("shout");
+                r1 = 3;
+	}
+};

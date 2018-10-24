@@ -1,0 +1,30 @@
+import "test2.ass";
+for (var i = 10; i >= 0; i --) {
+	system.println("i = ", i);
+}
+system.println("test Русский язык");
+
+a = {
+	b:function(f) {
+		return f();
+	}
+};
+
+system.println(a.b(function () {
+	return "hello";
+}));
+
+system.println("Лямда-замыкания:");
+
+(function () {
+	var tst = "test";
+	(test = function () {
+		system.println(tst);
+	})();
+})();
+
+tst = "erw";
+
+test();
+
+// Замыкания работают не очень
